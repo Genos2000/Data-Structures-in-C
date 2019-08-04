@@ -15,14 +15,6 @@ void push(stack *s, char ele)
 	s->a[s->top] = ele;
 }
 
-char pop(stack *s)
-{
-	char x;
-	x=s->a[s->top];
-	s->top--;
-	return x;
-}
-
 int isempty(stack *s)
 {
 	if(s->top == -1)
@@ -31,26 +23,19 @@ int isempty(stack *s)
 		return 0;	
 }
 
+char pop(stack *s)
+{
+	char x;
+	x=s->a[s->top];
+	s->top--;
+	return x;
+}
+
 char stacktop(stack *s)
 {
 	return s->a[s->top];
 }
 
-void stringrev(char infix[])
-{
-	int i;
-	/* reverse infix string and evaluate it same as the postfix expression*/
-	strrev(infix);
-	/* change '(' to ')' and vice versa */
-	for(i = 0 ;i <= strlen(infix);i++)
-	{
-		if(infix[i]=='(')
-			infix[i]=')';
-		else if(infix[i]==')')
-			infix[i]='(';
-	}
-}
-/* rest function is same as postfix program*/
 int precedence(char x)
 {
 	switch(x)
@@ -65,15 +50,13 @@ int precedence(char x)
 	return -1;
 }
 
-void convert(char infix[], char pre[])
+void convert(char infix[], char post[])
 {
 	stack s;
 	s.top=-1;
 	int i=0,k=0;
 	char x,ele;
-
-	stringrev(infix);
-
+	
 	for(i = 0 ; i <= strlen(infix); i++)
 	{
 		x = infix[i];
@@ -81,7 +64,7 @@ void convert(char infix[], char pre[])
 	/* push left parenthesis into stack. */
 			push(&s,x);
 		else if(x == ')')
-	/* if right parenthesis is found, pop stack and append to prefix expression until left parenthesis is found,
+	/* if right parenthesis is found, pop stack and append to postfix expression until left parenthesis is found,
 			dont append parenthesis. */
 		{
 			while(1)
@@ -96,18 +79,18 @@ void convert(char infix[], char pre[])
 					ele = pop(&s);
 					if(ele == '(')  
 						break;
-					pre[k++] = ele;
+					post[k++] = ele;
 				}
 			}
 		}
-		else if(isalnum(x))  
-	/* if operand then append to prefix expression */
-			pre[k++] = x;
+		else if(isalnum(x))
+	/* if operand then append to postfix expression */
+			post[k++] = x;
 		else if(isempty(&s)) 
 	/* from here assuming x is operator.push operator into stack if its empty. */	 
 			push(&s,x);  
 		else if(precedence(x) > precedence(stacktop(&s)))  
-	/* if stack isnt empty and if precedence of incoming operator greater then stacktop, push into stack. */
+	/* if stack isnt empty and if precedence of incoming operator greater than stacktop, push into stack. */
 			push(&s,x);
 		else
 		{
@@ -116,29 +99,27 @@ void convert(char infix[], char pre[])
 			while((isempty(&s) == 0) && (precedence(x) <= precedence(stacktop(&s)))) 
 			{
 				ele = pop(&s);
-				pre[k++] = ele;
+				post[k++] = ele;
 			}
 			push(&s,x);
 		}
 	}
-	/* after the infix string ends, pop and append remaining stack elements, if any to prefix expression. */
+	/* after the infix string ends, pop and append remaining stack elements, to postfix expression. */
 		while(isempty(&s) == 0)
 		{
 			ele = pop(&s);
-			pre[k++] = ele;
+			post[k++] = ele;
 		}
-		pre[k] = '\0'; //End of string
-		/* Reverse the prefix expression to get the result */
-		strrev(pre);
+		post[k] = '\0'; //Ends the string
 }
 
 int main()
 {
 	char infix[50];
-	char pre[50];
+	char post[50];
 	printf("\nEnter infix expression \n");
 	gets(infix);
-	convert(infix,pre);
-	printf("Prefix expression = %s \n", pre);
+	convert(infix,post);
+	printf("Postfix expression = %s \n", post);
 	return 0;
 }
