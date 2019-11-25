@@ -218,19 +218,26 @@ void deleteBefore(LL *l, int ele)
 	{
 		return;
 	}
+	p = l->start;
+	if(l->start->next->data == ele)
+	{
+		l->start = l->start->next;
+		p->next = NULL;
+		return;
+	}
 	q = l->start;
-	while(q->next != NULL)
+	while(q->next->next != NULL)
 	{
 		if(ele == q->next->next->data)
 			break;
 		else
 			q  = q->next;
 	}
-	p = q->next;
-	if(p == NULL)
-		printf("%d is not found\n",ele);
+	if(q->next->next == NULL)
+		printf("Element not in linked list\n");
 	else
 	{
+		p = q->next;
 		q->next = p->next;
 		p->next = NULL;
 	}
@@ -249,7 +256,10 @@ void deleteAfter(LL *l, int ele)
 	}
 	p = q->next;
 	if(p == NULL)
+	{
+		printf("Element not in linked list\n");
 		return;
+	}
 	else
 	{
 		q->next = p->next;
