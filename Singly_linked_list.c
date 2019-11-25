@@ -62,6 +62,64 @@ void insertAtPos(LL * l, int ele, int pos)
 	p->next = newnode;
 }
 
+void insertBefore(LL *l, int pos, int ele)
+{
+	node *newnode,*p;
+	newnode = (node *)malloc(sizeof(node));
+	newnode->data = ele;
+	p=l->start;
+	if(p == NULL)
+	{
+		return;
+	}
+	if(l->start->data == pos)
+	{
+		newnode->next=l->start;
+		l->start=newnode;
+		return;
+	}	
+	while(p->next != NULL)
+	{
+		if(p->next->data == pos)
+			break;
+		else
+			p = p->next;
+	}
+	if(p->next == NULL)
+	{
+		printf("Element not in linked list\n");
+		return;
+	}
+	newnode->next=p->next;
+	p->next=newnode;
+}
+
+void insertAfter(LL *l, int pos, int ele)
+{
+	node *newnode,*p;
+	newnode = (node *)malloc(sizeof(node));
+	newnode->data = ele;
+	p=l->start;
+	if(p == NULL)
+	{
+		return;
+	}
+	while(p != NULL)
+	{
+		if(p->data == pos)
+			break;
+		else
+			p = p->next;
+	}
+	if(p == NULL)
+	{
+		printf("Element not in linked list\n");
+		return;
+	}
+	newnode->next=p->next;
+	p->next=newnode;
+}
+
 int deleteBeginning(LL *l)
 {
 	node *p;  //p must refer to node to delete
@@ -92,7 +150,6 @@ int deleteEnd(LL *l)
 		q->next = NULL;
 	}
 	return p->data;
-
 }
 
 int deletePos(LL *l,int pos)
@@ -147,6 +204,52 @@ void deleteElement(LL *l, int ele)
 	p = q->next;
 	if(p == NULL)
 		printf("%d is not found\n",ele);
+	else
+	{
+		q->next = p->next;
+		p->next = NULL;
+	}
+}
+
+void deleteBefore(LL *l, int ele)
+{
+	node *p,*q;
+	if(l->start->data == ele)
+	{
+		return;
+	}
+	q = l->start;
+	while(q->next != NULL)
+	{
+		if(ele == q->next->next->data)
+			break;
+		else
+			q  = q->next;
+	}
+	p = q->next;
+	if(p == NULL)
+		printf("%d is not found\n",ele);
+	else
+	{
+		q->next = p->next;
+		p->next = NULL;
+	}
+}
+
+void deleteAfter(LL *l, int ele)
+{
+	node *p,*q;
+	q = l->start;
+	while(q->next != NULL)
+	{
+		if(ele == q->data)
+			break;
+		else
+			q  = q->next;
+	}
+	p = q->next;
+	if(p == NULL)
+		return;
 	else
 	{
 		q->next = p->next;
@@ -226,10 +329,10 @@ int main()
 	l.start = NULL; 
 	while(1)
 	{	
-		printf("\n1:  Insert Beginning\n2:  Insert End\n3:  Insert at postion\n4:  Delete Beginning\n5:  Delete End\n6:  Delete at Position\n7:  Count\n8:  Delete Element\n9:  Search\n10: Sort\n11: Reverse\n12: Display\n13: Exit\n");
+		printf("\n1:  Insert Beginning\n2:  Insert End\n3:  Insert at postion\n4:  Insert Before Element\n5:  Insert After Element\n6:  Delete Beginning\n7:  Delete End\n8:  Delete at Position\n9:  Count\n10: Delete Element\n11: Delete Before element\n12: Delete After Element\n13: Search\n14: Sort\n15: Reverse\n16: Display\n17: Exit\n");
 		printf("Enter your choice: ");
 		scanf("%d",&ch);
-		if(ch == 13)
+		if(ch == 17)
 			break;
 		switch(ch)
 		{
@@ -254,6 +357,22 @@ int main()
 				display(&l);
 				break;
 			case 4:
+				printf("Enter Element Before which insertion should take place\n");
+				scanf("%d",&pos);
+				printf("Enter element to insert\n");
+				scanf("%d",&ele);
+				insertBefore(&l,pos,ele);
+				display(&l);
+				break;
+			case 5:
+				printf("Enter Element After which insertion will take place\n");
+				scanf("%d",&pos);
+				printf("Enter element to insert\n");
+				scanf("%d",&ele);
+				insertAfter(&l,pos,ele);
+				display(&l);
+				break;
+			case 6:
 				ele=deleteBeginning(&l);
 				if(ele == -1)
 					printf("Linked list empty\n");
@@ -261,7 +380,7 @@ int main()
 					printf("Deleted node having %d data element\n",ele);
 				display(&l);
 					break;
-			case 5:
+			case 7:
 				ele=deleteEnd(&l);
 				if(ele == -1)
 					printf("Linked list empty\n");
@@ -269,23 +388,35 @@ int main()
 					printf("Deleted node having %d data element\n",ele);
 				display(&l);
 					break;
-			case 6:
+			case 8:
 				printf("Enter position: ");
 				scanf("%d",&pos);
 				ele=deletePos(&l,pos);
 				printf("Deleted node having %d data element\n",ele);
 				display(&l);
 				break;
-			case 7:
+			case 9:
 				printf("Count = %d",count(&l));
 				break;
-			case 8:
+			case 10:
 				printf("Enter element to delete: ");
 				scanf("%d",&ele);
 				deleteElement(&l,ele);
 				display(&l);
 				break;
-			case 9:
+			case 11:
+				printf("Enter element before which deletion should take place : ");
+				scanf("%d",&ele);
+				deleteBefore(&l,ele);
+				display(&l);
+				break;
+			case 12:
+				printf("Enter element After which deletion should take place : ");
+				scanf("%d",&ele);
+				deleteAfter(&l,ele);
+				display(&l);
+				break;	
+			case 13:
 				printf("Enter Element to Search\n");
 				scanf("%d",&ele);
 				if(search(&l,ele))
@@ -293,17 +424,17 @@ int main()
 				else
 					printf("Element not found\n");
 				break;
-			case 10:
+			case 14:
 				sort(&l);
 				printf("Sorted Linked list\n");
 				display(&l);
 				break;
-			case 11:
+			case 15:
 				reverse(&l);
 				printf("Reversed Linked list\n");
 				display(&l);
 				break;
-			case 12:
+			case 16:
 				display(&l);
 				break;
 			default:
